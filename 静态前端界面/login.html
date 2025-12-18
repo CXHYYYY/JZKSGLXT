@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>驾照考试管理系统 - 登录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#E8F4F8] min-h-screen flex items-center justify-center font-sans overflow-hidden antialiased">
+    <!-- 登录表单容器 -->
+    <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-md animate-fade-up">
+        <!-- Logo区域 -->
+        <div class="flex justify-center mb-6">
+            <span class="iconify w-16 h-16 text-[#2C5AA0]" data-icon="mingcute:shield-fill"></span>
+        </div>
+        
+        <!-- 标题区域 -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-[#333333]">驾考管理系统</h1>
+            <p class="text-sm text-gray-500 mt-2">管理员登录</p>
+        </div>
+        
+        <!-- 登录表单 -->
+        <form>
+            <!-- 用户名输入框 -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" placeholder="用户名" value="admin" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                    <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" data-icon="mingcute:user-line"></span>
+                </div>
+            </div>
+            
+            <!-- 密码输入框 -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="password" placeholder="密码" value="123456" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                    <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" data-icon="mingcute:lock-line"></span>
+                </div>
+            </div>
+            
+            <!-- 记住我和忘记密码 -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="w-4 h-4 text-[#34C759] focus:ring-[#34C759]/50 border-gray-300 rounded">
+                    <label for="remember" class="ml-2 text-sm text-gray-600">记住我</label>
+                </div>
+                <a href="#" class="text-sm text-[#34C759] hover:underline">忘记密码?</a>
+            </div>
+            
+            <!-- 登录按钮 -->
+            <button type="submit" class="w-full bg-[#34C759] hover:bg-[#2DBE5F] text-white font-medium py-3 px-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-green-500/20">
+                登录
+            </button>
+            
+            <!-- 提示信息 -->
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500">演示账号: admin / 任意密码</p>
+            </div>
+        </form>
+        
+        <!-- 版权信息 -->
+        <div class="mt-8 text-center">
+            <p class="text-xs text-gray-400">© 2024 驾考管理系统. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

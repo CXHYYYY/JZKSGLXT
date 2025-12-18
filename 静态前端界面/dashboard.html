@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>驾照考试管理系统 - 仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        /* 侧边栏菜单样式 */
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+        .sidebar-item.active {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border-right: 4px solid #34C759;
+        }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] min-h-screen font-sans overflow-hidden antialiased">
+    <div class="flex h-screen">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+            <!-- 顶部Logo -->
+            <div class="p-6 border-b border-gray-100 flex items-center">
+                <span class="iconify w-8 h-8 text-[#2C5AA0]" data-icon="mingcute:shield-fill"></span>
+                <span class="ml-3 text-xl font-bold text-[#333333]">驾考管理系统</span>
+            </div>
+            
+            <!-- 菜单列表 -->
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="dashboard.html" class="sidebar-item active flex items-center px-4 py-3 rounded-lg font-medium">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:dashboard-line"></span>
+                    仪表盘
+                </a>
+                <a href="user-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:user-3-line"></span>
+                    用户管理
+                </a>
+                <a href="question-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
+                    试题管理
+                </a>
+                <a href="exam-config.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
+                    考试配置
+                </a>
+                <a href="log-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
+                    日志管理
+                </a>
+            </nav>
+            
+            <!-- 底部退出按钮 -->
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" class="flex items-center px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-500 transition-all">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:logout-box-line"></span>
+                    退出登录
+                </a>
+            </div>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-100">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <!-- 左侧：菜单按钮和标题 -->
+                    <div class="flex items-center">
+                        <button class="mr-4 text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:menu-line"></span>
+                        </button>
+                        <h1 class="text-xl font-semibold text-[#333333]">驾考管理系统</h1>
+                    </div>
+                    
+                    <!-- 右侧：搜索框、通知、用户信息 -->
+                    <div class="flex items-center space-x-4">
+                        <!-- 搜索框 -->
+                        <div class="relative">
+                            <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" data-icon="mingcute:search-line"></span>
+                        </div>
+                        
+                        <!-- 通知图标 -->
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:bell-line"></span>
+                        </button>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1 rounded-lg transition-all">
+                            <span class="iconify w-8 h-8 bg-[#34C759] text-white rounded-full flex items-center justify-center" data-icon="mingcute:user-3-fill"></span>
+                            <span class="font-medium text-sm">管理员</span>
+                            <span class="iconify w-4 h-4 text-gray-400" data-icon="mingcute:arrow-down-s-line"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="p-6">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- 总用户数 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">总用户数</p>
+                                <h3 class="text-3xl font-bold text-[#333333]">1,248</h3>
+                                <p class="text-green-500 text-xs mt-2 flex items-center">
+                                    <span class="iconify w-3 h-3 mr-1" data-icon="mingcute:arrow-up-line"></span>
+                                    +12.5%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 题库总量 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">题库总量</p>
+                                <h3 class="text-3xl font-bold text-[#333333]">3,456</h3>
+                                <p class="text-green-500 text-xs mt-2 flex items-center">
+                                    <span class="iconify w-3 h-3 mr-1" data-icon="mingcute:arrow-up-line"></span>
+                                    +8.2%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-blue-500" data-icon="mingcute:file-list-3-fill"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 今日考试 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">今日考试</p>
+                                <h3 class="text-3xl font-bold text-[#333333]">89</h3>
+                                <p class="text-green-500 text-xs mt-2 flex items-center">
+                                    <span class="iconify w-3 h-3 mr-1" data-icon="mingcute:arrow-up-line"></span>
+                                    +23.1%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-orange-500" data-icon="mingcute:calendar-fill"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 通过率 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm mb-1">通过率</p>
+                                <h3 class="text-3xl font-bold text-[#333333]">87.5%</h3>
+                                <p class="text-green-500 text-xs mt-2 flex items-center">
+                                    <span class="iconify w-3 h-3 mr-1" data-icon="mingcute:arrow-up-line"></span>
+                                    +2.3%
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-purple-500" data-icon="mingcute:chart-line-fill"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 最近活动和考试统计 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 最近活动 -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-semibold text-[#333333]">最近活动</h2>
+                            <a href="#" class="text-[#34C759] text-sm font-medium hover:underline">查看全部</a>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- 活动项 -->
+                            <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-all">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="iconify w-4 h-4 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-medium text-[#333333]">张三</p>
+                                        <span class="text-xs text-gray-400">5分钟前</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">完成了科目一考试</p>
+                                    <p class="text-xs text-green-500 font-medium mt-1">95分</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-all">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="iconify w-4 h-4 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-medium text-[#333333]">李四</p>
+                                        <span class="text-xs text-gray-400">12分钟前</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">完成了科目四考试</p>
+                                    <p class="text-xs text-green-500 font-medium mt-1">88分</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-all">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="iconify w-4 h-4 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-medium text-[#333333]">王五</p>
+                                        <span class="text-xs text-gray-400">25分钟前</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">开始了科目一练习</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-all">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="iconify w-4 h-4 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-medium text-[#333333]">赵六</p>
+                                        <span class="text-xs text-gray-400">1小时前</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">完成了科目一考试</p>
+                                    <p class="text-xs text-green-500 font-medium mt-1">92分</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-all">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="iconify w-4 h-4 text-[#34C759]" data-icon="mingcute:user-3-fill"></span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-medium text-[#333333]">孙七</p>
+                                        <span class="text-xs text-gray-400">2小时前</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-1">完成了科目四考试</p>
+                                    <p class="text-xs text-green-500 font-medium mt-1">90分</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 考试统计 -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-semibold text-[#333333]">考试统计</h2>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <!-- 科目一统计 -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span class="w-3 h-3 rounded-full bg-[#34C759] mr-2"></span>
+                                        <span class="text-sm font-medium text-[#333333]">科目一</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-[#34C759]">87.4%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                    <div class="bg-[#34C759] h-2.5 rounded-full" style="width: 87.4%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">通过 1837 / 总计 2101</p>
+                            </div>
+                            
+                            <!-- 科目四统计 -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                                        <span class="text-sm font-medium text-[#333333]">科目四</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-blue-500">87.4%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                    <div class="bg-blue-500 h-2.5 rounded-full" style="width: 87.4%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">通过 1623 / 总计 1857</p>
+                            </div>
+                            
+                            <!-- 科目一练习统计 -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span class="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+                                        <span class="text-sm font-medium text-[#333333]">科目一练习</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-orange-500">92.1%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                    <div class="bg-orange-500 h-2.5 rounded-full" style="width: 92.1%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">完成 5432 / 总计 5900</p>
+                            </div>
+                            
+                            <!-- 科目四练习统计 -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <span class="w-3 h-3 rounded-full bg-purple-500 mr-2"></span>
+                                        <span class="text-sm font-medium text-[#333333]">科目四练习</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-purple-500">90.5%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2.5">
+                                    <div class="bg-purple-500 h-2.5 rounded-full" style="width: 90.5%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">完成 3210 / 总计 3547</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

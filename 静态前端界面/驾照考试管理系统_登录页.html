@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>驾照考试管理系统 - 登录</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#E8F4F8] min-h-screen flex flex-col items-center justify-center font-sans overflow-hidden antialiased">
+<!-- 主内容容器：垂直居中，水平居中 -->
+<main class="w-full max-w-[1440px] px-6 flex flex-col items-center justify-center text-center animate-fade-up">
+<!-- 1. 盾牌图标区域 -->
+<!-- 间距：距离下方标题约 40px (mb-10) -->
+<div class="mb-10 text-[#2C5AA0] flex items-center justify-center drop-shadow-sm">
+<!-- 使用实心盾牌图标象征安全与权威 -->
+<span class="iconify w-24 h-24" data-icon="mingcute:shield-fill"></span>
+</div>
+<!-- 2. 主标题区域 -->
+<!-- 字体：深灰 #333333, 字号 36px (text-4xl), 字重 Bold -->
+<!-- 间距：距离下方副标题 24px (mb-6) -->
+<h1 class="text-[#333333] text-4xl font-bold tracking-tight mb-6">
+            驾照考试管理系统
+        </h1>
+<!-- 3. 副标题区域 -->
+<!-- 字体：中灰 #666666, 字号 16px (text-base), 字重 Normal -->
+<!-- 间距：距离下方按钮 32px (mb-8) -->
+<p class="text-[#666666] text-base font-normal mb-8 tracking-wide">
+            专业的驾考题库管理平台
+        </p>
+<!-- 4. 主操作按钮区域 -->
+<!-- 按钮样式：绿色背景 #34C759, 悬停 #2DBE5F, 点击 #27AD54 -->
+<!-- 尺寸：宽 200px (w-[200px]), 高 56px (h-14), 圆角 8px (rounded-lg) -->
+<button class="w-[200px] h-14 bg-[#34C759] hover:bg-[#2DBE5F] active:bg-[#27AD54] text-white text-lg font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-green-500/20 cursor-pointer select-none">
+            进入系统
+        </button>
+</main>
+</body>
+</html>

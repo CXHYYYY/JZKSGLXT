@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>驾照考试管理系统 - 日志管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        /* 侧边栏菜单样式 */
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+        .sidebar-item.active {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border-right: 4px solid #34C759;
+        }
+        /* 表格样式 */
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background-color: rgba(52, 199, 89, 0.05);
+        }
+        /* 标签页样式 */
+        .tab-item {
+            transition: all 0.2s ease;
+        }
+        .tab-item:hover {
+            color: #34C759;
+        }
+        .tab-item.active {
+            color: #34C759;
+            border-bottom: 2px solid #34C759;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] min-h-screen font-sans overflow-hidden antialiased">
+    <div class="flex h-screen">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+            <!-- 顶部Logo -->
+            <div class="p-6 border-b border-gray-100 flex items-center">
+                <span class="iconify w-8 h-8 text-[#2C5AA0]" data-icon="mingcute:shield-fill"></span>
+                <span class="ml-3 text-xl font-bold text-[#333333]">驾考管理系统</span>
+            </div>
+            
+            <!-- 菜单列表 -->
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="dashboard.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:dashboard-line"></span>
+                    仪表盘
+                </a>
+                <a href="user-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:user-3-line"></span>
+                    用户管理
+                </a>
+                <a href="question-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
+                    试题管理
+                </a>
+                <a href="exam-config.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
+                    考试配置
+                </a>
+                <a href="log-management.html" class="sidebar-item active flex items-center px-4 py-3 rounded-lg font-medium">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
+                    日志管理
+                </a>
+            </nav>
+            
+            <!-- 底部退出按钮 -->
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" class="flex items-center px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-500 transition-all">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:logout-box-line"></span>
+                    退出登录
+                </a>
+            </div>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-100">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <!-- 左侧：菜单按钮和标题 -->
+                    <div class="flex items-center">
+                        <button class="mr-4 text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:menu-line"></span>
+                        </button>
+                        <h1 class="text-xl font-semibold text-[#333333]">驾考管理系统</h1>
+                    </div>
+                    
+                    <!-- 右侧：搜索框、通知、用户信息 -->
+                    <div class="flex items-center space-x-4">
+                        <!-- 搜索框 -->
+                        <div class="relative">
+                            <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" data-icon="mingcute:search-line"></span>
+                        </div>
+                        
+                        <!-- 通知图标 -->
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:bell-line"></span>
+                        </button>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1 rounded-lg transition-all">
+                            <span class="iconify w-8 h-8 bg-[#34C759] text-white rounded-full flex items-center justify-center" data-icon="mingcute:user-3-fill"></span>
+                            <span class="font-medium text-sm">管理员</span>
+                            <span class="iconify w-4 h-4 text-gray-400" data-icon="mingcute:arrow-down-s-line"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="p-6">
+                <!-- 页面标题 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#333333]">日志管理</h2>
+                        <p class="text-sm text-gray-500 mt-1">查看系统登录日志和操作日志</p>
+                    </div>
+                </div>
+                
+                <!-- 标签页 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div class="border-b border-gray-200">
+            <div class="flex space-x-8">
+                <button id="login-tab" class="tab-item active px-6 py-4 text-sm font-medium">
+                    登录日志
+                </button>
+                <button id="operation-tab" class="tab-item px-6 py-4 text-sm font-medium text-gray-600">
+                    操作日志
+                </button>
+            </div>
+        </div>
+                    
+                    <!-- 搜索和筛选区域 -->
+                    <div class="p-4">
+                        <div class="flex flex-wrap gap-4">
+                            <!-- 用户名搜索 -->
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-gray-700 whitespace-nowrap">用户名：</label>
+                                <input type="text" placeholder="输入用户名" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            </div>
+                            
+                            <!-- 时间范围 -->
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-gray-700 whitespace-nowrap">时间范围：</label>
+                                <input type="date" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                <span class="text-gray-500">至</span>
+                                <input type="date" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            </div>
+                            
+                            <!-- 登录状态 -->
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-gray-700 whitespace-nowrap">状态：</label>
+                                <select class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                    <option value="">全部状态</option>
+                                    <option value="success">成功</option>
+                                    <option value="fail">失败</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 搜索按钮 -->
+                            <div class="flex items-center space-x-2 ml-auto">
+                                <button class="bg-[#34C759] hover:bg-[#2DBE5F] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                                    搜索
+                                </button>
+                                <button class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                                    重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 日志列表表格 - 登录日志 -->
+                    <div id="login-logs" class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">真实姓名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP地址</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">登录状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">登录设备</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">备注</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <!-- 日志行 -->
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:30:25</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">成功</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">正常登录</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:25:18</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">student001</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">张三</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.101</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">成功</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">iOS 16 - Safari</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">正常登录</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:20:45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">student002</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">李四</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.102</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">失败</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Android 13 - Chrome</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">密码错误</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:15:32</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">teacher001</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">张教练</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.103</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">成功</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 11 - Edge</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">正常登录</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:10:15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">成功</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">正常登录</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 日志列表表格 - 操作日志 -->
+                    <div id="operation-logs" class="overflow-x-auto hidden">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">真实姓名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作内容</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP地址</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">设备信息</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <!-- 日志行 -->
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:35:42</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">新增</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">添加了新用户 student003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:32:18</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">修改</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">更新了试题 ID: 123 的内容</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:28:55</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">配置</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">创建了新的考试配置 "科目一模拟考试"</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:25:30</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">teacher001</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">张教练</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">查询</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">查看了学生考试成绩</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.103</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 11 - Edge</td>
+                                </tr>
+                                
+                                <tr class="table-row">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-20 14:22:15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center mr-2">
+                                                <span class="iconify w-3 h-3 text-gray-500" data-icon="mingcute:user-3-line"></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-[#333333]">admin</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">系统管理员</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">删除</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">删除了过期的考试记录</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">192.168.1.100</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">Windows 10 - Chrome</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页区域 -->
+                    <div class="flex items-center justify-between mt-4 px-4">
+                        <div class="text-sm text-gray-500">
+                            显示 <span class="font-medium text-gray-700">1</span> 到 <span class="font-medium text-gray-700">5</span> 条，共 <span class="font-medium text-gray-700">128</span> 条记录
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-double-line"></span>
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-line"></span>
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-[#34C759] bg-[#34C759] text-white font-medium">
+                                1
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">
+                                2
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">
+                                3
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">
+                                4
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">
+                                5
+                            </button>
+                            <span class="px-3 py-1 text-gray-500">...</span>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50">
+                                26
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
+                                <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-line"></span>
+                            </button>
+                            <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
+                                <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-double-line"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取标签页元素
+            const loginTab = document.getElementById('login-tab');
+            const operationTab = document.getElementById('operation-tab');
+            
+            // 获取日志内容元素
+            const loginLogs = document.getElementById('login-logs');
+            const operationLogs = document.getElementById('operation-logs');
+            
+            // 登录日志标签点击事件
+            loginTab.addEventListener('click', function() {
+                // 更新标签样式
+                loginTab.classList.add('active');
+                loginTab.classList.remove('text-gray-600');
+                operationTab.classList.remove('active');
+                operationTab.classList.add('text-gray-600');
+                
+                // 显示登录日志，隐藏操作日志
+                loginLogs.classList.remove('hidden');
+                operationLogs.classList.add('hidden');
+            });
+            
+            // 操作日志标签点击事件
+            operationTab.addEventListener('click', function() {
+                // 更新标签样式
+                operationTab.classList.add('active');
+                operationTab.classList.remove('text-gray-600');
+                loginTab.classList.remove('active');
+                loginTab.classList.add('text-gray-600');
+                
+                // 显示操作日志，隐藏登录日志
+                operationLogs.classList.remove('hidden');
+                loginLogs.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
