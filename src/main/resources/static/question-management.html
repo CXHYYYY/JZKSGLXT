@@ -101,7 +101,7 @@
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
                     试题管理
                 </a>
-                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                <a href="exam-config.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
                     考试配置
                 </a>
@@ -793,7 +793,8 @@
             
             // 添加选项
             options.forEach((option, index) => {
-                const code = String.fromCharCode(65 + index); // A, B, C, D...
+                // 保留原始选项代码，特别是对于判断题的特殊选项代码（√和×）
+                const code = option.optionCode || String.fromCharCode(65 + index);
                 addOptionElement(code, option.content, option.isCorrect, options.length > 2);
             });
         }
@@ -801,9 +802,21 @@
         // 重新排序选项代码
         function reorderOptions() {
             const optionItems = optionsContainer.querySelectorAll('.option-item');
+            
+            // 获取题型，判断是否为判断题
+            const typeId = document.getElementById('modalType').value;
+            const isJudgment = questionTypes.some(t => t.typeId === parseInt(typeId) && t.typeName === '判断题');
+            
             optionItems.forEach((item, index) => {
                 const codeInput = item.querySelector('input[name="optionCodes"]');
-                codeInput.value = String.fromCharCode(65 + index);
+                
+                if (isJudgment && optionItems.length === 2) {
+                    // 判断题且只有2个选项，使用特殊选项代码
+                    codeInput.value = index === 0 ? '√' : '×';
+                } else {
+                    // 其他情况使用字母代码
+                    codeInput.value = String.fromCharCode(65 + index);
+                }
             });
         }
         
@@ -822,6 +835,13 @@
                 while (currentOptions.length < 2) {
                     addOption();
                 }
+                
+                // 为判断题设置特殊选项代码
+                const optionItems = optionsContainer.querySelectorAll('.option-item');
+                optionItems.forEach((item, index) => {
+                    const codeInput = item.querySelector('input[name="optionCodes"]');
+                    codeInput.value = index === 0 ? '√' : '×';
+                });
             } else {
                 // 单选题和多选题至少需要2个选项
                 if (currentOptions.length < 2) {
@@ -829,6 +849,9 @@
                         addOption();
                     }
                 }
+                
+                // 为其他题型设置字母选项代码
+                reorderOptions();
             }
         }
         

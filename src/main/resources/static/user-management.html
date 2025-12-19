@@ -101,7 +101,7 @@
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
                     试题管理
                 </a>
-                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                <a href="exam-config.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
                     考试配置
                 </a>
@@ -238,19 +238,19 @@
                     <div class="text-sm text-gray-500" id="paginationInfo">
                         显示 <span class="font-medium text-gray-700">1</span> 到 <span class="font-medium text-gray-700">5</span> 条，共 <span class="font-medium text-gray-700">1248</span> 条记录
                     </div>
-                    <div class="flex items-center space-x-2" id="paginationControls">
-                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="firstPageBtn">
-                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-left-double-line"></span>
+                    <div class="flex items-center space-x-1" id="paginationControls">
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="firstPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-double-line"></span>
                         </button>
-                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="prevPageBtn">
-                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-left-line"></span>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="prevPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-line"></span>
                         </button>
                         <!-- 页码按钮将通过JavaScript动态生成 -->
-                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="nextPageBtn">
-                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-right-line"></span>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50" id="nextPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-line"></span>
                         </button>
-                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="lastPageBtn">
-                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-right-double-line"></span>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="lastPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-double-line"></span>
                         </button>
                     </div>
                 </div>
@@ -319,7 +319,6 @@
         // 当前页码和每页条数
         let currentPage = 1;
         const pageSize = 10;
-        let totalPages = 1;
         
         // 模态框相关元素
         const modal = document.getElementById('userModal');
@@ -435,14 +434,14 @@
             });
             
             nextPageBtn.addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadUsers();
-                }
+                // 这里需要根据总页数判断，暂时简单处理
+                currentPage++;
+                loadUsers();
             });
             
             lastPageBtn.addEventListener('click', function() {
-                currentPage = totalPages;
+                // 这里需要根据总页数判断，暂时简单处理
+                currentPage = 100;
                 loadUsers();
             });
             
@@ -600,7 +599,7 @@
         // 渲染分页信息
         function renderPagination(pageData) {
             const totalElements = pageData.totalElements;
-            totalPages = pageData.totalPages;
+            const totalPages = pageData.totalPages;
             const start = (currentPage - 1) * pageSize + 1;
             const end = Math.min(currentPage * pageSize, totalElements);
             

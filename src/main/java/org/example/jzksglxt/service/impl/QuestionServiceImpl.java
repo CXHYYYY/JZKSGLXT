@@ -82,6 +82,25 @@ public class QuestionServiceImpl implements QuestionService {
     public void deleteQuestion(Long id) {
         // 删除题目（级联删除选项）
         questionRepository.deleteById(id);
+        
+        // 重置自增计数器
+        // 查询剩余记录中的最大ID
+        List<Question> remainingQuestions = questionRepository.findAll();
+        Long newAutoIncrementValue;
+        if (remainingQuestions.isEmpty()) {
+            // 如果没有剩余记录，重置为1
+            newAutoIncrementValue = 1L;
+        } else {
+            // 否则，找到最大ID并设置为maxId + 1
+            Long maxId = remainingQuestions.stream()
+                    .mapToLong(Question::getQuestionId)
+                    .max()
+                    .orElse(0L);
+            newAutoIncrementValue = maxId + 1;
+        }
+        
+        // 重置自增计数器
+        questionRepository.resetAutoIncrement(newAutoIncrementValue);
     }
 
     @Override

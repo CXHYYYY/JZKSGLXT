@@ -87,7 +87,27 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public void deleteUser(Long id) {
+        // 删除用户
         sysUserRepository.deleteById(id);
+        
+        // 重置自增计数器
+        // 查询剩余记录中的最大ID
+        List<SysUser> remainingUsers = sysUserRepository.findAll();
+        Long newAutoIncrementValue;
+        if (remainingUsers.isEmpty()) {
+            // 如果没有剩余记录，重置为1
+            newAutoIncrementValue = 1L;
+        } else {
+            // 否则，找到最大ID并设置为maxId + 1
+            Long maxId = remainingUsers.stream()
+                    .mapToLong(SysUser::getId)
+                    .max()
+                    .orElse(0L);
+            newAutoIncrementValue = maxId + 1;
+        }
+        
+        // 重置自增计数器
+        sysUserRepository.resetAutoIncrement(newAutoIncrementValue);
     }
 
     @Override
