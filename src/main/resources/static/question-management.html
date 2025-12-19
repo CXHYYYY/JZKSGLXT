@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>驾照考试管理系统 - 试题管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        /* 侧边栏菜单样式 */
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+        .sidebar-item.active {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border-right: 4px solid #34C759;
+        }
+        /* 表格样式 */
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background-color: rgba(52, 199, 89, 0.05);
+        }
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] min-h-screen font-sans overflow-hidden antialiased">
+    <div class="flex h-screen">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+            <!-- 顶部Logo -->
+            <div class="p-6 border-b border-gray-100 flex items-center">
+                <span class="iconify w-8 h-8 text-[#2C5AA0]" data-icon="mingcute:shield-fill"></span>
+                <span class="ml-3 text-xl font-bold text-[#333333]">驾考管理系统</span>
+            </div>
+            
+            <!-- 菜单列表 -->
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:dashboard-line"></span>
+                    仪表盘
+                </a>
+                <a href="user-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:user-3-line"></span>
+                    用户管理
+                </a>
+                <a href="question-management.html" class="sidebar-item active flex items-center px-4 py-3 rounded-lg font-medium">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
+                    试题管理
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
+                    考试配置
+                </a>
+                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
+                    日志管理
+                </a>
+            </nav>
+            
+            <!-- 底部退出按钮 -->
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" class="flex items-center px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-500 transition-all" id="logoutBtn">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:logout-box-line"></span>
+                    退出登录
+                </a>
+            </div>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-100">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <!-- 左侧：菜单按钮和标题 -->
+                    <div class="flex items-center">
+                        <button class="mr-4 text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:menu-line"></span>
+                        </button>
+                        <h1 class="text-xl font-semibold text-[#333333]">驾考管理系统</h1>
+                    </div>
+                    
+                    <!-- 右侧：搜索框、通知、用户信息 -->
+                    <div class="flex items-center space-x-4">
+                        <!-- 搜索框 -->
+                        <div class="relative">
+                            <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" data-icon="mingcute:search-line"></span>
+                        </div>
+                        
+                        <!-- 通知图标 -->
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:bell-line"></span>
+                        </button>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1 rounded-lg transition-all">
+                            <span class="iconify w-8 h-8 bg-[#34C759] text-white rounded-full flex items-center justify-center" data-icon="mingcute:user-3-fill"></span>
+                            <span class="font-medium text-sm" id="currentUser">管理员</span>
+                            <span class="iconify w-4 h-4 text-gray-400" data-icon="mingcute:arrow-down-s-line"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="p-6">
+                <!-- 页面标题和操作按钮 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#333333]">试题管理</h2>
+                        <p class="text-sm text-gray-500 mt-1">管理系统试题和选项</p>
+                    </div>
+                    <button class="bg-[#34C759] hover:bg-[#2DBE5F] text-white px-5 py-2 rounded-lg font-medium text-sm shadow-sm hover:shadow-md transition-all flex items-center" id="addQuestionBtn">
+                        <span class="iconify w-4 h-4 mr-2" data-icon="mingcute:add-line"></span>
+                        新增试题
+                    </button>
+                </div>
+                
+                <!-- 搜索和筛选区域 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <!-- 科目筛选 -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">科目：</label>
+                            <select id="searchSubject" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                <option value="">全部科目</option>
+                                <!-- 科目选项将通过JavaScript动态加载 -->
+                            </select>
+                        </div>
+                        
+                        <!-- 题型筛选 -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">题型：</label>
+                            <select id="searchType" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                <option value="">全部题型</option>
+                                <!-- 题型选项将通过JavaScript动态加载 -->
+                            </select>
+                        </div>
+                        
+                        <!-- 关键词搜索 -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">关键词：</label>
+                            <input type="text" id="searchKeyword" placeholder="输入题目内容关键词" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                        </div>
+                        
+                        <!-- 搜索按钮 -->
+                        <div class="flex items-center space-x-2 ml-auto">
+                            <button class="bg-[#34C759] hover:bg-[#2DBE5F] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all" id="searchBtn">
+                                搜索
+                            </button>
+                            <button class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all" id="resetBtn">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 试题列表表格 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">题目编号</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">题目内容</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">科目</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">题型</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">正确答案</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200" id="questionTableBody">
+                            <!-- 试题行将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 分页区域 -->
+                <div class="flex items-center justify-between mt-6">
+                    <div class="text-sm text-gray-500" id="paginationInfo">
+                        显示 <span class="font-medium text-gray-700">1</span> 到 <span class="font-medium text-gray-700">5</span> 条，共 <span class="font-medium text-gray-700">1248</span> 条记录
+                    </div>
+                    <div class="flex items-center space-x-2" id="paginationControls">
+                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="firstPageBtn">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-left-double-line"></span>
+                        </button>
+                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="prevPageBtn">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-left-line"></span>
+                        </button>
+                        <!-- 页码按钮将通过JavaScript动态生成 -->
+                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="nextPageBtn">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-right-line"></span>
+                        </button>
+                        <button class="px-4 py-2 rounded-lg border border-[#34C759] bg-white text-[#34C759] hover:bg-[#34C759] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="lastPageBtn">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:chevron-right-double-line"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增/编辑试题模态框 -->
+    <div id="questionModal" class="modal">
+        <div class="modal-content animate-fade-up">
+            <span class="close">&times;</span>
+            <h2 class="text-xl font-bold text-[#333333] mb-6" id="modalTitle">新增试题</h2>
+            <form id="questionForm">
+                <input type="hidden" id="questionId" name="questionId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="modalQuestionNo" class="block text-sm font-medium text-gray-700 mb-1">题目编号</label>
+                        <input type="text" id="modalQuestionNo" name="questionNo" placeholder="请输入题目编号" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                    </div>
+                    
+                    <div>
+                        <label for="modalSubject" class="block text-sm font-medium text-gray-700 mb-1">科目</label>
+                        <select id="modalSubject" name="subjectId" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <!-- 科目选项将通过JavaScript动态加载 -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="modalType" class="block text-sm font-medium text-gray-700 mb-1">题型</label>
+                    <select id="modalType" name="typeId" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                        <!-- 题型选项将通过JavaScript动态加载 -->
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="modalContent" class="block text-sm font-medium text-gray-700 mb-1">题目内容</label>
+                    <textarea id="modalContent" name="content" placeholder="请输入题目内容" rows="4" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm"></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="modalImageUrl" class="block text-sm font-medium text-gray-700 mb-1">图片URL（可选）</label>
+                    <input type="text" id="modalImageUrl" name="imageUrl" placeholder="请输入图片URL" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                </div>
+                
+                <!-- 选项列表 -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">选项列表</label>
+                    <div id="optionsContainer">
+                        <!-- 选项将通过JavaScript动态生成 -->
+                        <div class="option-item mb-3 p-3 border border-gray-100 rounded-lg flex items-start space-x-3">
+                            <input type="text" name="optionCodes" value="A" readonly class="w-8 px-2 py-1 rounded border border-gray-200 text-center text-sm bg-gray-50">
+                            <input type="text" name="optionContents" placeholder="请输入选项内容" class="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="isCorrects" class="w-4 h-4 text-[#34C759] focus:ring-[#34C759]">
+                                <label class="ml-2 text-sm text-gray-700">正确</label>
+                            </div>
+                            <button type="button" class="text-red-500 hover:text-red-700 remove-option-btn" style="display: none;">
+                                <span class="iconify w-5 h-5" data-icon="mingcute:delete-bin-line"></span>
+                            </button>
+                        </div>
+                        <div class="option-item mb-3 p-3 border border-gray-100 rounded-lg flex items-start space-x-3">
+                            <input type="text" name="optionCodes" value="B" readonly class="w-8 px-2 py-1 rounded border border-gray-200 text-center text-sm bg-gray-50">
+                            <input type="text" name="optionContents" placeholder="请输入选项内容" class="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <div class="flex items-center">
+                                <input type="checkbox" name="isCorrects" class="w-4 h-4 text-[#34C759] focus:ring-[#34C759]">
+                                <label class="ml-2 text-sm text-gray-700">正确</label>
+                            </div>
+                            <button type="button" class="text-red-500 hover:text-red-700 remove-option-btn" style="display: none;">
+                                <span class="iconify w-5 h-5" data-icon="mingcute:delete-bin-line"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-3">
+                        <button type="button" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center" id="addOptionBtn">
+                            <span class="iconify w-4 h-4 mr-2" data-icon="mingcute:add-line"></span>
+                            添加选项
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all" id="cancelBtn">
+                        取消
+                    </button>
+                    <button type="submit" class="bg-[#34C759] hover:bg-[#2DBE5F] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 查看选项模态框 -->
+    <div id="optionsModal" class="modal">
+        <div class="modal-content animate-fade-up">
+            <span class="close">&times;</span>
+            <h2 class="text-xl font-bold text-[#333333] mb-6" id="optionsModalTitle">选项详情</h2>
+            <div id="optionsContent">
+                <!-- 选项内容将通过JavaScript动态生成 -->
+            </div>
+            <div class="flex justify-end mt-6">
+                <button type="button" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all" id="closeOptionsBtn">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前页码和每页条数
+        let currentPage = 1;
+        const pageSize = 10;
+        let totalPages = 1;
+        
+        // 模态框相关元素
+        const modal = document.getElementById('questionModal');
+        const closeModal = document.querySelector('.close');
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const questionForm = document.getElementById('questionForm');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // 查看选项模态框相关元素
+        const optionsModal = document.getElementById('optionsModal');
+        const closeOptionsModal = optionsModal.querySelector('.close');
+        const closeOptionsBtn = document.getElementById('closeOptionsBtn');
+        const optionsModalTitle = document.getElementById('optionsModalTitle');
+        const optionsContent = document.getElementById('optionsContent');
+        
+        // 搜索和筛选相关元素
+        const searchSubject = document.getElementById('searchSubject');
+        const searchType = document.getElementById('searchType');
+        const searchKeyword = document.getElementById('searchKeyword');
+        const searchBtn = document.getElementById('searchBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 分页相关元素
+        const firstPageBtn = document.getElementById('firstPageBtn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const lastPageBtn = document.getElementById('lastPageBtn');
+        const paginationInfo = document.getElementById('paginationInfo');
+        
+        // 试题表格相关元素
+        const questionTableBody = document.getElementById('questionTableBody');
+        
+        // 退出登录按钮
+        const logoutBtn = document.getElementById('logoutBtn');
+        const currentUser = document.getElementById('currentUser');
+        
+        // 选项相关元素
+        const optionsContainer = document.getElementById('optionsContainer');
+        const addOptionBtn = document.getElementById('addOptionBtn');
+        
+        // 存储科目和题型数据
+        let subjects = [];
+        let questionTypes = [];
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            checkLoginStatus();
+            // 加载科目和题型数据
+            loadSubjects();
+            loadQuestionTypes();
+            // 加载试题列表
+            loadQuestions();
+            
+            // 绑定事件
+            bindEvents();
+        });
+        
+        // 检查登录状态
+        function checkLoginStatus() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userObj = JSON.parse(user);
+                currentUser.textContent = userObj.realName;
+            } else {
+                // 未登录，跳转到登录页面
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // 绑定事件
+        function bindEvents() {
+            // 新增试题按钮点击事件
+            addQuestionBtn.addEventListener('click', function() {
+                openModal();
+            });
+            
+            // 关闭模态框
+            closeModal.addEventListener('click', function() {
+                closeModalFunc();
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeModalFunc();
+                }
+            });
+            
+            // 取消按钮点击事件
+            cancelBtn.addEventListener('click', function() {
+                closeModalFunc();
+            });
+            
+            // 表单提交事件
+            questionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveQuestion();
+            });
+            
+            // 搜索按钮点击事件
+            searchBtn.addEventListener('click', function() {
+                currentPage = 1;
+                loadQuestions();
+            });
+            
+            // 重置按钮点击事件
+            resetBtn.addEventListener('click', function() {
+                searchSubject.value = '';
+                searchType.value = '';
+                searchKeyword.value = '';
+                currentPage = 1;
+                loadQuestions();
+            });
+            
+            // 分页按钮点击事件
+            firstPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage = 1;
+                    loadQuestions();
+                }
+            });
+            
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadQuestions();
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadQuestions();
+                }
+            });
+            
+            lastPageBtn.addEventListener('click', function() {
+                currentPage = totalPages;
+                loadQuestions();
+            });
+            
+            // 退出登录按钮点击事件
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            });
+            
+            // 添加选项按钮点击事件
+            addOptionBtn.addEventListener('click', function() {
+                addOption();
+            });
+            
+            // 题型变化事件，根据题型调整选项数量
+            document.getElementById('modalType').addEventListener('change', function() {
+                adjustOptionsByType(this.value);
+            });
+            
+            // 关闭选项模态框事件
+            closeOptionsModal.addEventListener('click', function() {
+                optionsModal.style.display = 'none';
+            });
+            
+            // 点击关闭按钮关闭选项模态框
+            closeOptionsBtn.addEventListener('click', function() {
+                optionsModal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target == optionsModal) {
+                    optionsModal.style.display = 'none';
+                }
+            });
+        }
+        
+        // 打开选项模态框
+        function openOptionsModal(question) {
+            // 先显示加载状态
+            optionsModalTitle.textContent = `选项详情 - ${question.questionNo}`;
+            optionsContent.innerHTML = '<div class="text-center py-8">加载中...</div>';
+            optionsModal.style.display = 'block';
+            
+            // 调用获取题目详情的API
+            fetch(`/api/question/${question.questionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const questionDetails = data.data;
+                        // 渲染选项内容
+                        let html = `<div class="mb-4"><strong>题目内容：</strong>${questionDetails.content}</div>`;
+                        
+                        // 如果有图片，添加图片显示
+                        if (questionDetails.imageUrl) {
+                            html += `<div class="mb-4"><strong>题目图片：</strong></div>`;
+                            html += `<div class="mb-4 text-center">`;
+                            html += `<img src="${questionDetails.imageUrl}" alt="题目图片" class="max-w-full max-h-64 rounded-lg shadow-sm border border-gray-200" style="object-fit: contain;">`;
+                            html += `</div>`;
+                        }
+                        
+                        html += '<div class="mb-4"><strong>选项列表：</strong></div>';
+                        html += '<div class="space-y-3">';
+                        
+                        if (questionDetails.options && questionDetails.options.length > 0) {
+                            questionDetails.options.forEach(option => {
+                                // 为正确选项添加特殊样式
+                                const optionClass = option.isCorrect ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200';
+                                const correctMark = option.isCorrect ? '<span class="ml-2 text-green-500">(正确答案)</span>' : '';
+                                
+                                html += `
+                                    <div class="p-3 rounded-lg border ${optionClass}">
+                                        <div class="flex items-start">
+                                            <span class="font-bold mr-2">${option.optionCode}:</span>
+                                            <span class="flex-1">${option.content}${correctMark}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            html += '<div class="text-gray-500">暂无选项</div>';
+                        }
+                        
+                        html += '</div>';
+                        optionsContent.innerHTML = html;
+                    } else {
+                        optionsContent.innerHTML = `<div class="text-center py-8 text-red-500">${data.message || '获取选项失败'}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('获取选项失败:', error);
+                    optionsContent.innerHTML = '<div class="text-center py-8 text-red-500">获取选项失败，请稍后重试</div>';
+                });
+        }
+        
+        // 加载科目列表
+        function loadSubjects() {
+            fetch('/api/question/subjects')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        subjects = data.data;
+                        renderSubjectOptions();
+                    } else {
+                        alert(data.message || '获取科目列表失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('获取科目列表失败:', error);
+                    alert('获取科目列表失败，请稍后重试');
+                });
+        }
+        
+        // 加载题型列表
+        function loadQuestionTypes() {
+            fetch('/api/question/types')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        questionTypes = data.data;
+                        renderQuestionTypeOptions();
+                    } else {
+                        alert(data.message || '获取题型列表失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('获取题型列表失败:', error);
+                    alert('获取题型列表失败，请稍后重试');
+                });
+        }
+        
+        // 渲染科目选项
+        function renderSubjectOptions() {
+            const subjectSelectors = [
+                document.getElementById('searchSubject'),
+                document.getElementById('modalSubject')
+            ];
+            
+            subjectSelectors.forEach(selector => {
+                if (selector) {
+                    // 清空现有选项（保留默认选项）
+                    const defaultOption = selector.querySelector('option[value=""]');
+                    selector.innerHTML = defaultOption ? defaultOption.outerHTML : '';
+                    
+                    // 添加科目选项
+                    subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject.subjectId;
+                        option.textContent = subject.subjectName;
+                        selector.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        // 渲染题型选项
+        function renderQuestionTypeOptions() {
+            const typeSelectors = [
+                document.getElementById('searchType'),
+                document.getElementById('modalType')
+            ];
+            
+            typeSelectors.forEach(selector => {
+                if (selector) {
+                    // 清空现有选项（保留默认选项）
+                    const defaultOption = selector.querySelector('option[value=""]');
+                    selector.innerHTML = defaultOption ? defaultOption.outerHTML : '';
+                    
+                    // 添加题型选项
+                    questionTypes.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.typeId;
+                        option.textContent = type.typeName;
+                        selector.appendChild(option);
+                    });
+                }
+            });
+        }
+        
+        // 打开模态框
+        function openModal(question = null) {
+            // 清空表单
+            questionForm.reset();
+            document.getElementById('questionId').value = '';
+            
+            // 显示模态框
+            modal.style.display = 'block';
+            
+            if (question) {
+                // 编辑模式，先获取最新的题目详情
+                modalTitle.textContent = '编辑试题';
+                
+                // 显示加载状态
+                document.getElementById('modalQuestionNo').value = '加载中...';
+                document.getElementById('modalSubject').value = '';
+                document.getElementById('modalType').value = '';
+                document.getElementById('modalContent').value = '加载中...';
+                document.getElementById('modalImageUrl').value = '';
+                
+                // 重置选项，显示加载中
+                optionsContainer.innerHTML = '<div class="text-center py-4">选项加载中...</div>';
+                
+                // 调用获取题目详情的API
+                fetch(`/api/question/${question.questionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.code === 200) {
+                            const questionDetails = data.data;
+                            // 填充表单数据
+                            document.getElementById('questionId').value = questionDetails.questionId;
+                            document.getElementById('modalQuestionNo').value = questionDetails.questionNo;
+                            document.getElementById('modalSubject').value = questionDetails.subject.subjectId;
+                            document.getElementById('modalType').value = questionDetails.questionType.typeId;
+                            document.getElementById('modalContent').value = questionDetails.content;
+                            document.getElementById('modalImageUrl').value = questionDetails.imageUrl || '';
+                            
+                            // 重置选项并填充
+                            resetOptions();
+                            fillOptions(questionDetails.options);
+                        } else {
+                            alert(data.message || '获取题目详情失败');
+                            closeModalFunc();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取题目详情失败:', error);
+                        alert('获取题目详情失败，请稍后重试');
+                        closeModalFunc();
+                    });
+            } else {
+                // 新增模式
+                modalTitle.textContent = '新增试题';
+                // 重置选项
+                resetOptions();
+            }
+        }
+        
+        // 关闭模态框
+        function closeModalFunc() {
+            modal.style.display = 'none';
+        }
+        
+        // 重置选项
+        function resetOptions() {
+            // 清空现有选项，保留默认的A和B选项
+            const defaultOptions = optionsContainer.innerHTML;
+            optionsContainer.innerHTML = '';
+            
+            // 添加A选项
+            addOptionElement('A', '', false, false);
+            // 添加B选项
+            addOptionElement('B', '', false, false);
+        }
+        
+        // 添加选项元素
+        function addOptionElement(code, content, isCorrect, showRemoveBtn = true) {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'option-item mb-3 p-3 border border-gray-100 rounded-lg flex items-start space-x-3';
+            
+            optionDiv.innerHTML = `
+                <input type="text" name="optionCodes" value="${code}" readonly class="w-8 px-2 py-1 rounded border border-gray-200 text-center text-sm bg-gray-50">
+                <input type="text" name="optionContents" placeholder="请输入选项内容" value="${content}" class="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                <div class="flex items-center">
+                    <input type="checkbox" name="isCorrects" ${isCorrect ? 'checked' : ''} class="w-4 h-4 text-[#34C759] focus:ring-[#34C759]">
+                    <label class="ml-2 text-sm text-gray-700">正确</label>
+                </div>
+                <button type="button" class="text-red-500 hover:text-red-700 remove-option-btn" ${showRemoveBtn ? '' : 'style="display: none;"'}>
+                    <span class="iconify w-5 h-5" data-icon="mingcute:delete-bin-line"></span>
+                </button>
+            `;
+            
+            // 添加删除选项事件
+            const removeBtn = optionDiv.querySelector('.remove-option-btn');
+            removeBtn.addEventListener('click', function() {
+                optionDiv.remove();
+                // 重新排序选项代码
+                reorderOptions();
+            });
+            
+            optionsContainer.appendChild(optionDiv);
+        }
+        
+        // 填充选项
+        function fillOptions(options) {
+            // 清空现有选项
+            optionsContainer.innerHTML = '';
+            
+            // 添加选项
+            options.forEach((option, index) => {
+                const code = String.fromCharCode(65 + index); // A, B, C, D...
+                addOptionElement(code, option.content, option.isCorrect, options.length > 2);
+            });
+        }
+        
+        // 重新排序选项代码
+        function reorderOptions() {
+            const optionItems = optionsContainer.querySelectorAll('.option-item');
+            optionItems.forEach((item, index) => {
+                const codeInput = item.querySelector('input[name="optionCodes"]');
+                codeInput.value = String.fromCharCode(65 + index);
+            });
+        }
+        
+        // 根据题型调整选项数量
+        function adjustOptionsByType(typeId) {
+            const type = questionTypes.find(t => t.typeId === parseInt(typeId));
+            if (!type) return;
+            
+            const currentOptions = optionsContainer.querySelectorAll('.option-item');
+            
+            if (type.typeName === '判断题') {
+                // 判断题只需要2个选项
+                while (currentOptions.length > 2) {
+                    currentOptions[currentOptions.length - 1].remove();
+                }
+                while (currentOptions.length < 2) {
+                    addOption();
+                }
+            } else {
+                // 单选题和多选题至少需要2个选项
+                if (currentOptions.length < 2) {
+                    while (currentOptions.length < 2) {
+                        addOption();
+                    }
+                }
+            }
+        }
+        
+        // 添加选项
+        function addOption() {
+            const currentOptions = optionsContainer.querySelectorAll('.option-item');
+            const nextCode = String.fromCharCode(65 + currentOptions.length); // A, B, C, D...
+            
+            addOptionElement(nextCode, '', false);
+        }
+        
+        // 加载试题列表
+        function loadQuestions() {
+            // 构建查询参数
+            const params = new URLSearchParams();
+            params.append('page', currentPage);
+            params.append('size', pageSize);
+            
+            // 添加搜索条件
+            if (searchSubject.value) {
+                params.append('subjectId', searchSubject.value);
+            }
+            if (searchType.value) {
+                params.append('typeId', searchType.value);
+            }
+            if (searchKeyword.value) {
+                params.append('keyword', searchKeyword.value);
+            }
+            
+            // 发送请求
+            fetch(`/api/question/list?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        renderQuestions(data.data);
+                        renderPagination(data.data);
+                    } else {
+                        alert(data.message || '获取试题列表失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('获取试题列表失败:', error);
+                    alert('获取试题列表失败，请稍后重试');
+                });
+        }
+        
+        // 渲染试题列表
+        function renderQuestions(pageData) {
+            const questions = pageData.content;
+            let html = '';
+            
+            questions.forEach(question => {
+                // 格式化创建时间
+                const createTime = new Date(question.createdAt).toLocaleString();
+                
+                // 截断题目内容
+                const truncatedContent = question.content.length > 50 
+                    ? question.content.substring(0, 50) + '...' 
+                    : question.content;
+                
+                html += `
+                    <tr class="table-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${question.questionId}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${question.questionNo}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${truncatedContent}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${question.subject.subjectName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${question.questionType.typeName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${question.correctAnswer || ''}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${createTime}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <div class="flex items-center space-x-2">
+                                <button class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-medium transition-colors" onclick="openOptionsModal(${JSON.stringify(question).replace(/"/g, '&quot;')})">查看选项</button>
+                                <button class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-medium transition-colors" onclick="editQuestion(${JSON.stringify(question).replace(/"/g, '&quot;')})">编辑</button>
+                                <button class="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-medium transition-colors" onclick="deleteQuestion(${question.questionId})">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            questionTableBody.innerHTML = html;
+        }
+        
+        // 渲染分页信息
+        function renderPagination(pageData) {
+            const totalElements = pageData.totalElements;
+            totalPages = pageData.totalPages;
+            const start = (currentPage - 1) * pageSize + 1;
+            const end = Math.min(currentPage * pageSize, totalElements);
+            
+            // 更新分页信息
+            paginationInfo.innerHTML = `
+                显示 <span class="font-medium text-gray-700">${start}</span> 到 <span class="font-medium text-gray-700">${end}</span> 条，共 <span class="font-medium text-gray-700">${totalElements}</span> 条记录
+            `;
+            
+            // 更新分页按钮状态
+            firstPageBtn.disabled = currentPage === 1;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            lastPageBtn.disabled = currentPage === totalPages;
+        }
+        
+        // 保存试题
+        function saveQuestion() {
+            // 获取表单数据
+            const formData = new FormData(questionForm);
+            const questionData = {};
+            
+            // 处理基本字段
+            formData.forEach((value, key) => {
+                if (key !== 'optionCodes' && key !== 'optionContents' && key !== 'isCorrects') {
+                    questionData[key] = value;
+                }
+            });
+            
+            // 处理选项数据
+            const optionCodes = formData.getAll('optionCodes');
+            const optionContents = formData.getAll('optionContents');
+            const isCorrects = formData.getAll('isCorrects');
+            
+            questionData.options = [];
+            for (let i = 0; i < optionCodes.length; i++) {
+                questionData.options.push({
+                    optionCode: optionCodes[i],
+                    content: optionContents[i],
+                    isCorrect: isCorrects[i] === 'on' // 复选框选中时值为'on'
+                });
+            }
+            
+            // 构建请求
+            const url = questionData.questionId ? `/api/question/${questionData.questionId}` : '/api/question';
+            const method = questionData.questionId ? 'PUT' : 'POST';
+            
+            // 发送请求
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questionData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    // 保存成功，关闭模态框并刷新列表
+                    closeModalFunc();
+                    loadQuestions();
+                    alert(data.message || '保存成功');
+                } else {
+                    alert(data.message || '保存失败');
+                }
+            })
+            .catch(error => {
+                console.error('保存试题失败:', error);
+                alert('保存试题失败，请稍后重试');
+            });
+        }
+        
+        // 编辑试题
+        function editQuestion(question) {
+            openModal(question);
+        }
+        
+        // 删除试题
+        function deleteQuestion(id) {
+            if (confirm('确定要删除该试题吗？')) {
+                fetch(`/api/question/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        // 删除成功，刷新列表
+                        loadQuestions();
+                        alert(data.message || '删除成功');
+                    } else {
+                        alert(data.message || '删除失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('删除试题失败:', error);
+                    alert('删除试题失败，请稍后重试');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
