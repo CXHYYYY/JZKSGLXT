@@ -105,7 +105,7 @@
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
                     考试配置
                 </a>
-                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                <a href="log-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
                     日志管理
                 </a>
@@ -505,7 +505,12 @@
             }
             
             // 发送请求
-            fetch(`/api/user/list?${params.toString()}`)
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            fetch(`/api/user/list?${params.toString()}`, {
+                headers: {
+                    'X-Admin-Id': currentUser ? currentUser.id : ''
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === 200) {
@@ -629,10 +634,12 @@
             const method = userData.id ? 'PUT' : 'POST';
             
             // 发送请求
+            const currentUser = JSON.parse(localStorage.getItem('user'));
             fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Admin-Id': currentUser ? currentUser.id : ''
                 },
                 body: JSON.stringify(userData)
             })
@@ -661,8 +668,12 @@
         // 删除用户
         function deleteUser(id) {
             if (confirm('确定要删除该用户吗？')) {
+                const currentUser = JSON.parse(localStorage.getItem('user'));
                 fetch(`/api/user/${id}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'X-Admin-Id': currentUser ? currentUser.id : ''
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -684,10 +695,12 @@
         // 重置密码
         function resetPassword(id) {
             if (confirm('确定要重置该用户的密码吗？重置后密码将变为默认密码123456')) {
+                const currentUser = JSON.parse(localStorage.getItem('user'));
                 fetch(`/api/user/${id}/resetPassword`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Admin-Id': currentUser ? currentUser.id : ''
                     },
                     body: 'newPassword=123456'
                 })

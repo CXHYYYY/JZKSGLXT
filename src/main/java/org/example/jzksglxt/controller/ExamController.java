@@ -1,5 +1,6 @@
 package org.example.jzksglxt.controller;
 
+import org.example.jzksglxt.common.OperationLogUtil;
 import org.example.jzksglxt.dto.ExamConfigDTO;
 import org.example.jzksglxt.dto.ExamDTO;
 import org.example.jzksglxt.entity.Exam;
@@ -24,13 +25,20 @@ public class ExamController {
 
     // 创建考试配置
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createExam(@RequestBody ExamConfigDTO examConfigDTO) {
+    public ResponseEntity<Map<String, Object>> createExam(@RequestBody ExamConfigDTO examConfigDTO,
+                                                       @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             Exam exam = examService.createExam(examConfigDTO);
             result.put("success", true);
             result.put("message", "考试配置创建成功");
             result.put("data", exam);
+            
+            // 记录日志
+            if (adminId != null) {
+                OperationLogUtil.recordLog(adminId, "create", "exam_config", "创建考试配置: " + examConfigDTO.getExamName());
+            }
+            
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("success", false);
@@ -41,13 +49,20 @@ public class ExamController {
 
     // 生成考试题目
     @PostMapping("/{examId}/generate")
-    public ResponseEntity<Map<String, Object>> generateExamQuestions(@PathVariable Long examId) {
+    public ResponseEntity<Map<String, Object>> generateExamQuestions(@PathVariable Long examId,
+                                                                   @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             boolean success = examService.generateExamQuestions(examId);
             if (success) {
                 result.put("success", true);
                 result.put("message", "考试题目生成成功");
+                
+                // 记录日志
+                if (adminId != null) {
+                    OperationLogUtil.recordLog(adminId, "update", "exam_config", "生成考试题目: 考试ID=" + examId);
+                }
+                
                 return ResponseEntity.ok(result);
             } else {
                 result.put("success", false);
@@ -63,7 +78,9 @@ public class ExamController {
 
     // 获取考试列表
     @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getExamList(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<Map<String, Object>> getExamList(@RequestParam(defaultValue = "1") Integer page, 
+                                                          @RequestParam(defaultValue = "10") Integer size,
+                                                          @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             Pageable pageable = PageRequest.of(page - 1, size);
@@ -73,6 +90,8 @@ public class ExamController {
             result.put("data", examPage.getContent());
             result.put("total", examPage.getTotalElements());
             result.put("pages", examPage.getTotalPages());
+            
+                   
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("success", false);
@@ -83,7 +102,8 @@ public class ExamController {
 
     // 根据ID获取考试详情
     @GetMapping("/{examId}")
-    public ResponseEntity<Map<String, Object>> getExamById(@PathVariable Long examId) {
+    public ResponseEntity<Map<String, Object>> getExamById(@PathVariable Long examId,
+                                                         @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             ExamDTO examDTO = examService.getExamById(examId);
@@ -91,6 +111,9 @@ public class ExamController {
                 result.put("success", true);
                 result.put("message", "获取考试详情成功");
                 result.put("data", examDTO);
+                
+
+                
                 return ResponseEntity.ok(result);
             } else {
                 result.put("success", false);
@@ -106,13 +129,15 @@ public class ExamController {
 
     // 获取考试题目
     @GetMapping("/{examId}/questions")
-    public ResponseEntity<Map<String, Object>> getExamQuestions(@PathVariable Long examId) {
+    public ResponseEntity<Map<String, Object>> getExamQuestions(@PathVariable Long examId,
+                                                              @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             List<ExamQuestion> examQuestions = examService.getExamQuestions(examId);
             result.put("success", true);
             result.put("message", "获取考试题目成功");
             result.put("data", examQuestions);
+            
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("success", false);
@@ -123,13 +148,20 @@ public class ExamController {
 
     // 删除考试
     @DeleteMapping("/{examId}")
-    public ResponseEntity<Map<String, Object>> deleteExam(@PathVariable Long examId) {
+    public ResponseEntity<Map<String, Object>> deleteExam(@PathVariable Long examId,
+                                                        @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Map<String, Object> result = new HashMap<>();
         try {
             boolean success = examService.deleteExam(examId);
             if (success) {
                 result.put("success", true);
                 result.put("message", "考试删除成功");
+                
+                // 记录日志
+                if (adminId != null) {
+                    OperationLogUtil.recordLog(adminId, "delete", "exam_config", "删除考试: 考试ID=" + examId);
+                }
+                
                 return ResponseEntity.ok(result);
             } else {
                 result.put("success", false);

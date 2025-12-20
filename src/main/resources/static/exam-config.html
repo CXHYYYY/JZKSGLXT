@@ -105,7 +105,7 @@
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
                     考试配置
                 </a>
-                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                <a href="log-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
                     日志管理
                 </a>
@@ -796,11 +796,15 @@
                 scorePerQuestion: scorePerQuestion
             };
             
+            // 获取当前用户信息，添加X-Admin-Id请求头
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
             // 发送请求
             fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Admin-Id': user.id || ''
                 },
                 body: JSON.stringify(processedData)
             })
@@ -839,8 +843,14 @@
         // 生成考试题目
         function generateExam(examId) {
             if (confirm('确定要生成该考试的题目吗？')) {
+                // 获取当前用户信息，添加X-Admin-Id请求头
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                
                 fetch(`/api/exam/${examId}/generate`, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: {
+                        'X-Admin-Id': user.id || ''
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -862,8 +872,14 @@
         // 删除考试配置
         function deleteExam(examId) {
             if (confirm('确定要删除该考试配置吗？')) {
+                // 获取当前用户信息，添加X-Admin-Id请求头
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                
                 fetch(`/api/exam/${examId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'X-Admin-Id': user.id || ''
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {

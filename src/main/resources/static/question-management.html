@@ -105,7 +105,7 @@
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
                     考试配置
                 </a>
-                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                <a href="log-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
                     <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
                     日志管理
                 </a>
@@ -988,10 +988,12 @@
             const method = questionData.questionId ? 'PUT' : 'POST';
             
             // 发送请求
+            const currentUser = JSON.parse(localStorage.getItem('user'));
             fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Admin-Id': currentUser ? currentUser.id : ''
                 },
                 body: JSON.stringify(questionData)
             })
@@ -1020,8 +1022,12 @@
         // 删除试题
         function deleteQuestion(id) {
             if (confirm('确定要删除该试题吗？')) {
+                const currentUser = JSON.parse(localStorage.getItem('user'));
                 fetch(`/api/question/${id}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'X-Admin-Id': currentUser ? currentUser.id : ''
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {

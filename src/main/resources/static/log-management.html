@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>驾照考试管理系统 - 日志管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 简单的淡入浮动动画 */
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        /* 侧边栏菜单样式 */
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+        }
+        .sidebar-item.active {
+            background-color: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border-right: 4px solid #34C759;
+        }
+        /* 表格样式 */
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        .table-row:hover {
+            background-color: rgba(52, 199, 89, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-[#F5F7FA] min-h-screen font-sans overflow-hidden antialiased">
+    <div class="flex h-screen">
+        <!-- 左侧菜单栏 -->
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+            <!-- 顶部Logo -->
+            <div class="p-6 border-b border-gray-100 flex items-center">
+                <span class="iconify w-8 h-8 text-[#2C5AA0]" data-icon="mingcute:shield-fill"></span>
+                <span class="ml-3 text-xl font-bold text-[#333333]">驾考管理系统</span>
+            </div>
+            
+            <!-- 菜单列表 -->
+            <nav class="flex-1 p-4 space-y-1">
+                <a href="#" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:dashboard-line"></span>
+                    仪表盘
+                </a>
+                <a href="user-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:user-3-line"></span>
+                    用户管理
+                </a>
+                <a href="question-management.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:book-line"></span>
+                    试题管理
+                </a>
+                <a href="exam-config.html" class="sidebar-item flex items-center px-4 py-3 rounded-lg font-medium text-gray-600">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:settings-3-line"></span>
+                    考试配置
+                </a>
+                <a href="log-management.html" class="sidebar-item active flex items-center px-4 py-3 rounded-lg font-medium">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:clock-line"></span>
+                    日志管理
+                </a>
+            </nav>
+            
+            <!-- 底部退出按钮 -->
+            <div class="p-4 border-t border-gray-100">
+                <a href="login.html" class="flex items-center px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-red-50 hover:text-red-500 transition-all" id="logoutBtn">
+                    <span class="iconify w-5 h-5 mr-3" data-icon="mingcute:logout-box-line"></span>
+                    退出登录
+                </a>
+            </div>
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white shadow-sm border-b border-gray-100">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <!-- 左侧：菜单按钮和标题 -->
+                    <div class="flex items-center">
+                        <button class="mr-4 text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:menu-line"></span>
+                        </button>
+                        <h1 class="text-xl font-semibold text-[#333333]">驾考管理系统</h1>
+                    </div>
+                    
+                    <!-- 右侧：搜索框、通知、用户信息 -->
+                    <div class="flex items-center space-x-4">
+                        <!-- 搜索框 -->
+                        <div class="relative">
+                            <input type="text" placeholder="搜索..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                            <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" data-icon="mingcute:search-line"></span>
+                        </div>
+                        
+                        <!-- 通知图标 -->
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <span class="iconify w-5 h-5" data-icon="mingcute:bell-line"></span>
+                        </button>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 px-3 py-1 rounded-lg transition-all">
+                            <span class="iconify w-8 h-8 bg-[#34C759] text-white rounded-full flex items-center justify-center" data-icon="mingcute:user-3-fill"></span>
+                            <span class="font-medium text-sm" id="currentUser">管理员</span>
+                            <span class="iconify w-4 h-4 text-gray-400" data-icon="mingcute:arrow-down-s-line"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 内容区域 -->
+            <div class="p-6">
+                <!-- 页面标题和操作按钮 -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#333333]">日志管理</h2>
+                        <p class="text-sm text-gray-500 mt-1">查看和管理系统操作日志</p>
+                    </div>
+                </div>
+                
+                <!-- 搜索和筛选区域 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <!-- 操作类型筛选 -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">操作类型：</label>
+                            <select id="searchOperationType" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                <option value="">全部类型</option>
+                                <option value="create">创建</option>
+                                <option value="update">更新</option>
+                                <option value="delete">删除</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 操作模块筛选 -->
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">操作模块：</label>
+                            <select id="searchOperationModule" class="px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#34C759]/50 focus:border-[#34C759] text-sm">
+                                <option value="">全部模块</option>
+                                <option value="user_management">用户管理</option>
+                                <option value="question_management">试题管理</option>
+                                <option value="exam_config">考试配置</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 搜索按钮 -->
+                        <div class="flex items-center space-x-2 ml-auto">
+                            <button class="bg-[#34C759] hover:bg-[#2DBE5F] text-white px-4 py-2 rounded-lg font-medium text-sm transition-all" id="searchBtn">
+                                搜索
+                            </button>
+                            <button class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2 rounded-lg font-medium text-sm transition-all" id="resetBtn">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 日志列表表格 -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日志ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作人</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作类型</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作模块</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作详情</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200" id="logTableBody">
+                            <!-- 日志行将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 分页区域 -->
+                <div class="flex items-center justify-between mt-6">
+                    <div class="text-sm text-gray-500" id="paginationInfo">
+                        显示 <span class="font-medium text-gray-700">1</span> 到 <span class="font-medium text-gray-700">5</span> 条，共 <span class="font-medium text-gray-700">1248</span> 条记录
+                    </div>
+                    <div class="flex items-center space-x-1" id="paginationControls">
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="firstPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-double-line"></span>
+                        </button>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="prevPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-left-line"></span>
+                        </button>
+                        <!-- 页码按钮将通过JavaScript动态生成 -->
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-700 hover:bg-gray-50" id="nextPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-line"></span>
+                        </button>
+                        <button class="px-3 py-1 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" id="lastPageBtn">
+                            <span class="iconify w-4 h-4" data-icon="mingcute:chevron-right-double-line"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 当前页码和每页条数
+        let currentPage = 1;
+        const pageSize = 10;
+        
+        // 搜索和筛选相关元素
+        const searchOperationType = document.getElementById('searchOperationType');
+        const searchOperationModule = document.getElementById('searchOperationModule');
+        const searchBtn = document.getElementById('searchBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 分页相关元素
+        const firstPageBtn = document.getElementById('firstPageBtn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const lastPageBtn = document.getElementById('lastPageBtn');
+        const paginationInfo = document.getElementById('paginationInfo');
+        
+        // 日志表格相关元素
+        const logTableBody = document.getElementById('logTableBody');
+        
+        // 退出登录按钮
+        const logoutBtn = document.getElementById('logoutBtn');
+        const currentUser = document.getElementById('currentUser');
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            checkLoginStatus();
+            // 加载日志列表
+            loadLogs();
+            
+            // 绑定事件
+            bindEvents();
+        });
+        
+        // 检查登录状态
+        function checkLoginStatus() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userObj = JSON.parse(user);
+                currentUser.textContent = userObj.realName;
+            } else {
+                // 未登录，跳转到登录页面
+                window.location.href = '/login.html';
+            }
+        }
+        
+        // 绑定事件
+        function bindEvents() {
+            // 搜索按钮点击事件
+            searchBtn.addEventListener('click', function() {
+                currentPage = 1;
+                loadLogs();
+            });
+            
+            // 重置按钮点击事件
+            resetBtn.addEventListener('click', function() {
+                searchOperationType.value = '';
+                searchOperationModule.value = '';
+                currentPage = 1;
+                loadLogs();
+            });
+            
+            // 分页按钮点击事件
+            firstPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage = 1;
+                    loadLogs();
+                }
+            });
+            
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadLogs();
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', function() {
+                // 这里需要根据总页数判断，暂时简单处理
+                currentPage++;
+                loadLogs();
+            });
+            
+            lastPageBtn.addEventListener('click', function() {
+                // 这里需要根据总页数判断，暂时简单处理
+                currentPage = 100;
+                loadLogs();
+            });
+            
+            // 退出登录按钮点击事件
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            });
+        }
+        
+        // 加载日志列表
+        function loadLogs() {
+            // 构建查询参数
+            const params = new URLSearchParams();
+            params.append('pageNum', currentPage);
+            params.append('pageSize', pageSize);
+            
+            // 添加搜索条件
+            if (searchOperationType.value) {
+                params.append('operationType', searchOperationType.value);
+            }
+            if (searchOperationModule.value) {
+                params.append('operationModule', searchOperationModule.value);
+            }
+            
+            // 发送请求
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            fetch(`/api/log/list?${params.toString()}`, {
+                headers: {
+                    'X-Admin-Id': currentUser ? currentUser.id : ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    renderLogs(data.data);
+                    renderPagination(data.data);
+                } else {
+                    alert(data.message || '获取日志列表失败');
+                }
+            })
+            .catch(error => {
+                console.error('获取日志列表失败:', error);
+                alert('获取日志列表失败，请稍后重试');
+            });
+        }
+        
+        // 渲染日志列表
+        function renderLogs(pageData) {
+            const logs = pageData.content;
+            let html = '';
+            
+            logs.forEach(log => {
+                // 格式化操作时间
+                const operationTime = new Date(log.operationTime).toLocaleString();
+                
+                // 操作类型样式
+                let operationTypeClass = '';
+                let operationTypeText = '';
+                switch(log.operationType) {
+                    case 'create':
+                        operationTypeClass = 'bg-green-100 text-green-800';
+                        operationTypeText = '创建';
+                        break;
+                    case 'update':
+                        operationTypeClass = 'bg-blue-100 text-blue-800';
+                        operationTypeText = '更新';
+                        break;
+                    case 'delete':
+                        operationTypeClass = 'bg-red-100 text-red-800';
+                        operationTypeText = '删除';
+                        break;
+                    default:
+                        operationTypeClass = 'bg-gray-100 text-gray-800';
+                        operationTypeText = '未知';
+                        break;
+                }
+                
+                // 操作模块样式
+                let operationModuleClass = 'bg-gray-100 text-gray-800';
+                let operationModuleText = '';
+                switch(log.operationModule) {
+                    case 'user_management':
+                        operationModuleClass = 'bg-purple-100 text-purple-800';
+                        operationModuleText = '用户管理';
+                        break;
+                    case 'question_management':
+                        operationModuleClass = 'bg-pink-100 text-pink-800';
+                        operationModuleText = '试题管理';
+                        break;
+                    case 'exam_config':
+                        operationModuleClass = 'bg-indigo-100 text-indigo-800';
+                        operationModuleText = '考试配置';
+                        break;
+                }
+                
+                html += `
+                    <tr class="table-row">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${log.logId}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${operationTime}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${log.admin.realName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="${operationTypeClass} text-xs font-medium px-2.5 py-0.5 rounded-full">${operationTypeText}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="${operationModuleClass} text-xs font-medium px-2.5 py-0.5 rounded-full">${operationModuleText}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${log.operationDetail}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="delete-log-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition-all" 
+                                    data-log-id="${log.logId}">
+                                <span class="iconify w-4 h-4 mr-1" data-icon="mingcute:delete-bin-line"></span>
+                                删除
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            logTableBody.innerHTML = html;
+            
+            // 为删除按钮绑定事件
+            bindDeleteEvent();
+        }
+        
+        // 删除日志
+        function deleteLog(logId) {
+            if (!confirm('确定要删除这条日志吗？')) {
+                return;
+            }
+            
+            const currentUser = JSON.parse(localStorage.getItem('user'));
+            fetch(`/api/log/delete/${logId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Admin-Id': currentUser ? currentUser.id : ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    alert('日志删除成功');
+                    loadLogs(); // 重新加载日志列表
+                } else {
+                    alert(data.message || '日志删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('日志删除失败:', error);
+                alert('日志删除失败，请稍后重试');
+            });
+        }
+        
+        // 绑定删除事件
+        function bindDeleteEvent() {
+            const deleteButtons = document.querySelectorAll('.delete-log-btn');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const logId = parseInt(this.dataset.logId);
+                    deleteLog(logId);
+                });
+            });
+        }
+        
+        // 渲染分页信息
+        function renderPagination(pageData) {
+            const totalElements = pageData.totalElements;
+            const totalPages = pageData.totalPages;
+            const start = (currentPage - 1) * pageSize + 1;
+            const end = Math.min(currentPage * pageSize, totalElements);
+            
+            // 更新分页信息
+            paginationInfo.innerHTML = `
+                显示 <span class="font-medium text-gray-700">${start}</span> 到 <span class="font-medium text-gray-700">${end}</span> 条，共 <span class="font-medium text-gray-700">${totalElements}</span> 条记录
+            `;
+            
+            // 更新分页按钮状态
+            firstPageBtn.disabled = currentPage === 1;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            lastPageBtn.disabled = currentPage === totalPages;
+        }
+    </script>
+</body>
+</html>

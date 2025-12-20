@@ -1,5 +1,6 @@
 package org.example.jzksglxt.controller;
 
+import org.example.jzksglxt.common.OperationLogUtil;
 import org.example.jzksglxt.common.ResponseResult;
 import org.example.jzksglxt.dto.QuestionDTO;
 import org.example.jzksglxt.dto.QuestionListDTO;
@@ -36,6 +37,7 @@ public class QuestionController {
      * @param keyword 关键词（可选）
      * @param page 页码（从1开始）
      * @param size 每页大小
+     * @param adminId 管理员ID（从请求头获取）
      * @return 题目列表
      */
     @GetMapping("/list")
@@ -43,7 +45,8 @@ public class QuestionController {
                                                          @RequestParam(required = false) Integer typeId,
                                                          @RequestParam(required = false) String keyword,
                                                          @RequestParam(defaultValue = "1") Integer page,
-                                                         @RequestParam(defaultValue = "10") Integer size) {
+                                                         @RequestParam(defaultValue = "10") Integer size,
+                                                         @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         // 创建分页参数，按创建时间倒序排序
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Question> questionPage = questionService.getQuestionList(subjectId, typeId, keyword, pageable);
@@ -51,30 +54,45 @@ public class QuestionController {
         // 将Question转换为QuestionListDTO，包含正确答案
         Page<QuestionListDTO> questionListDTOPage = questionPage.map(QuestionListDTO::new);
         
+
+        
         return ResponseResult.success(questionListDTOPage);
     }
 
     /**
      * 获取题目详情
      * @param id 题目ID
+     * @param adminId 管理员ID（从请求头获取）
      * @return 题目详情
      */
     @GetMapping("/{id}")
-    public ResponseResult<Question> getQuestionById(@PathVariable Long id) {
+    public ResponseResult<Question> getQuestionById(@PathVariable Long id,
+                                                   @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         Question question = questionService.getQuestionById(id);
+        
+
+        
         return ResponseResult.success(question);
     }
 
     /**
      * 添加题目
      * @param questionDTO 题目信息DTO
+     * @param adminId 管理员ID（从请求头获取）
      * @return 添加结果
      */
     @PostMapping
-    public ResponseResult<Question> addQuestion(@RequestBody QuestionDTO questionDTO) {
+    public ResponseResult<Question> addQuestion(@RequestBody QuestionDTO questionDTO,
+                                              @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         // 转换为Question实体
         Question question = convertToEntity(questionDTO);
         Question addedQuestion = questionService.addQuestion(question);
+        
+        // 记录日志
+        if (adminId != null) {
+            OperationLogUtil.recordLog(adminId, "create", "question_management", "添加题目");
+        }
+        
         return ResponseResult.success(addedQuestion);
     }
 
@@ -82,14 +100,22 @@ public class QuestionController {
      * 更新题目
      * @param id 题目ID
      * @param questionDTO 题目信息DTO
+     * @param adminId 管理员ID（从请求头获取）
      * @return 更新结果
      */
     @PutMapping("/{id}")
-    public ResponseResult<Question> updateQuestion(@PathVariable Long id, @RequestBody QuestionDTO questionDTO) {
+    public ResponseResult<Question> updateQuestion(@PathVariable Long id, @RequestBody QuestionDTO questionDTO,
+                                                 @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         // 转换为Question实体
         Question question = convertToEntity(questionDTO);
         question.setQuestionId(id);
         Question updatedQuestion = questionService.updateQuestion(question);
+        
+        // 记录日志
+        if (adminId != null) {
+            OperationLogUtil.recordLog(adminId, "update", "question_management", "更新题目");
+        }
+        
         return ResponseResult.success(updatedQuestion);
     }
     
@@ -136,31 +162,47 @@ public class QuestionController {
     /**
      * 删除题目
      * @param id 题目ID
+     * @param adminId 管理员ID（从请求头获取）
      * @return 删除结果
      */
     @DeleteMapping("/{id}")
-    public ResponseResult<Void> deleteQuestion(@PathVariable Long id) {
+    public ResponseResult<Void> deleteQuestion(@PathVariable Long id,
+                                              @RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         questionService.deleteQuestion(id);
+        
+        // 记录日志
+        if (adminId != null) {
+            OperationLogUtil.recordLog(adminId, "delete", "question_management", "删除题目");
+        }
+        
         return ResponseResult.success("删除成功");
     }
 
     /**
      * 获取科目列表
+     * @param adminId 管理员ID（从请求头获取）
      * @return 科目列表
      */
     @GetMapping("/subjects")
-    public ResponseResult<List<Subject>> getSubjectList() {
+    public ResponseResult<List<Subject>> getSubjectList(@RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         List<Subject> subjectList = questionService.getSubjectList();
+        
+
+        
         return ResponseResult.success(subjectList);
     }
 
     /**
      * 获取题型列表
+     * @param adminId 管理员ID（从请求头获取）
      * @return 题型列表
      */
     @GetMapping("/types")
-    public ResponseResult<List<QuestionType>> getQuestionTypeList() {
+    public ResponseResult<List<QuestionType>> getQuestionTypeList(@RequestHeader(value = "X-Admin-Id", required = false) Long adminId) {
         List<QuestionType> typeList = questionService.getQuestionTypeList();
+        
+
+        
         return ResponseResult.success(typeList);
     }
 }
